@@ -10,5 +10,8 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ()
     fieldsets = ()
 
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ['user','city','pin_code','latitude','longitude']
+
 admin.site.register(User, CustomUserAdmin)
-admin.site.register(UserProfile)
+admin.site.register(UserProfile, UserProfileAdmin)
