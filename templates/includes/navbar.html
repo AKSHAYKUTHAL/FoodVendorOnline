@@ -39,14 +39,14 @@
                             {% endif %}
                                 <a href="{marketplace' %}" class="btn btn-outline-danger text-uppercase font-weight-bold">Marketplace</a>
                             {% if user.is_authenticated %}
-                                <a class="cs-color cs-popup-joinus-btn login-popup" href="{myAccount' %}">My Account</a>
-                                <a class="cs-color cs-popup-joinus-btn login-popup text-danger" href="{logout' %}">Logout</a>
+                                <a class="cs-color cs-popup-joinus-btn login-popup" href="{% url 'accounts:myAccount' %}">My Account</a>
+                                <a class="cs-color cs-popup-joinus-btn login-popup text-danger" href="{% url 'accounts:logout' %}">Logout</a>
                             {% else %}
-                                <a class="cs-color cs-popup-joinus-btn login-popup" href="{login' %}">Login</a> / 
-                                    <span>
-                                        <a href="{% url 'accounts:registerUser' %}" class="cs-color cs-popup-joinus-btn login-popup ml-0">Register</a>
-                                    </span>
-                                        <a class="get-start-btn" href="{% url 'accounts:registerVendor' %}">Register Restaurant </a>                                
+                                    <a class="cs-color cs-popup-joinus-btn login-popup" href="{% url 'accounts:login' %}">Login</a> / 
+                                <span>
+                                    <a href="{% url 'accounts:registerUser' %}" class="cs-color cs-popup-joinus-btn login-popup ml-0">Register</a>
+                                </span>
+                                    <a class="get-start-btn" href="{% url 'accounts:registerVendor' %}">Register Restaurant </a>                                
                             {% endif %}
                         </div>
                     </div>
