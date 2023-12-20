@@ -5,7 +5,7 @@ from vendor.forms import VendorForm
 from .forms import UserForm
 from .models import User,UserProfile
 from django.contrib import messages,auth
-from .utils import detectUser, send_email_to_user
+from .utils import detectUser, send_verification_email
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.utils.http import urlsafe_base64_decode
@@ -57,7 +57,7 @@ def registerUser(request):
             # Send verification email
             mail_subject = 'Please activate your food online account'
             email_template = 'accounts/emails/account_verification_email.html'
-            send_email_to_user(request, user, mail_subject, email_template)
+            send_verification_email(request, user, mail_subject, email_template)
 
             messages.success(request,'Your account has been registered successfully.The activation link has been sent to the email. Please activate to use the account.')
             return redirect('accounts:registerUser')
@@ -101,7 +101,7 @@ def registerVendor(request):
             # Send verification email
             mail_subject = 'Please activate your food online account'
             email_template = 'accounts/emails/account_verification_email.html'
-            send_email_to_user(request, user, mail_subject, email_template)
+            send_verification_email(request, user, mail_subject, email_template)
 
             messages.success(request,'Your account has been registered successfully! The activation link has been sent to the email. Please activate and wait for the approval.')
             return redirect('accounts:registerVendor')
@@ -199,7 +199,7 @@ def forgot_password(request):
             # Send reset password email
             mail_subject = 'Reset your password'
             email_template = 'accounts/emails/reset_password_email.html'
-            send_email_to_user(request, user, mail_subject, email_template)
+            send_verification_email(request, user, mail_subject, email_template)
 
             messages.success(request, 'The password reset link has been sent to your email adddress')
             return redirect('accounts:login')
