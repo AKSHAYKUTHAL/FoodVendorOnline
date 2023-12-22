@@ -5,7 +5,13 @@ from accounts.models import UserProfile
 from .models import Vendor
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
 
+from accounts.views import check_role_vender
+
+
+@login_required(login_url='accounts:login')
+@user_passes_test(check_role_vender)
 def v_profile(request):
     profile = get_object_or_404(UserProfile,user=request.user)
     vendor = get_object_or_404(Vendor,user=request.user)
