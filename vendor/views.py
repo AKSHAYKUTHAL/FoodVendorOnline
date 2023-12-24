@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from accounts.views import check_role_vender
 from vendor.utils import get_vendor
-from menu.forms import CategoryForm
+from menu.forms import CategoryForm, FoodItemForm
 from django.template.defaultfilters import slugify
 
 
@@ -74,6 +74,8 @@ def fooditems_by_category(request, pk=None):
 
 
 
+@login_required(login_url='accounts:login')
+@user_passes_test(check_role_vender)
 def add_category(request):
     if request.method == 'POST':
         form = CategoryForm(request.POST)
@@ -99,6 +101,8 @@ def add_category(request):
 
 
 
+@login_required(login_url='accounts:login')
+@user_passes_test(check_role_vender)
 def edit_category(request, pk=None):
     category = get_object_or_404(Category,pk=pk)
     if request.method == 'POST':
@@ -125,8 +129,40 @@ def edit_category(request, pk=None):
 
 
 
+
+@login_required(login_url='accounts:login')
+@user_passes_test(check_role_vender)
 def delete_category(request, pk=None):
     category = get_object_or_404(Category,pk=pk)
     category.delete()
     messages.success(request,'Category has been deleted succesfully')
     return redirect('accounts:vendor:menu_builder')
+
+
+
+
+
+
+
+@login_required(login_url='accounts:login')
+@user_passes_test(check_role_vender)
+def add_food(request):
+    if request.method == 'POST':
+        form = FoodItemForm(request.POST, request.FILES)
+        if form.is_valid():
+            food_title = form.cleaned_data['food_title']
+            food = form.save(commit=False)
+            food.vendor = get_vendor(request)
+            food.slug = slugify(food_title)
+            form.save()
+            messages.success(request,'Food item added successfully.')
+            return redirect('accounts:vendor:fooditems_by_category',food.category.id)
+        else:
+            print(form.errors)
+    else:
+        form = FoodItemForm()
+
+    context = {
+        'form':form,
+    }
+    return render(request,'vendor/add_food.html',context)
