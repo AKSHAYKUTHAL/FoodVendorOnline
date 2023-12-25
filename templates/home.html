@@ -122,9 +122,9 @@
 										<figure>
 											<a href="{vendor_detail' vendor.vendor_slug %}">
 												{% if vendor.user_profile.profile_picture %}
-												<img src="{{ vendor.user_profile.profile_picture.url }}" class="img-thumb wp-post-image" alt="">
+													<img src="{{ vendor.user_profile.profile_picture.url }}" class="img-thumb wp-post-image" alt="">
 												{% else %}
-												<img src="{% static 'images/default-profile.png' %}" class="img-thumb wp-post-image" alt="">
+													<img src="{% static 'images/default-profile.png' %}" class="img-thumb wp-post-image" alt="">
 												{% endif %}
 											</a>
 										</figure>

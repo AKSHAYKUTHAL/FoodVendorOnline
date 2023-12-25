@@ -81,12 +81,18 @@ def add_category(request):
         form = CategoryForm(request.POST)
         if form.is_valid():
             category_name = form.cleaned_data['category_name']
-            category = form.save(commit=False)
-            category.vendor = get_vendor(request)
-            category.slug = slugify(category_name)
-            form.save()
-            messages.success(request,'Category added successfully.')
-            return redirect('vendor:menu_builder')
+            
+            # Check if the category with the same name exists for the current vendor
+            existing_category = Category.objects.filter(vendor=get_vendor(request), category_name__iexact=category_name).first()
+            if existing_category:
+                form.add_error('category_name', 'Category with this name already exists.')
+            else:
+                category = form.save(commit=False)
+                category.vendor = get_vendor(request)
+                category.slug = slugify(category_name)
+                category.save()
+                messages.success(request, 'Category added successfully.')
+                return redirect('vendor:menu_builder')
         else:
             print(form.errors)
     else:

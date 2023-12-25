@@ -25,6 +25,8 @@ urlpatterns = [
     path('',views.home, name='home'),
     path('accounts/',include('accounts.urls')),
     path('vendor/', include('vendor.urls')), 
+    path('marketplace/', include('marketplace.urls')), 
+
 
 ]
 
