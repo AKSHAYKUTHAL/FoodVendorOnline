@@ -23,7 +23,7 @@
                             <button class="btn btn-secondary" onclick="history.back()"><i class="fa fa-angle-left" aria-hidden="true"></i> Back</button>
                             <br><br>
                             <h6>Add New Category</h6>
-                            <form action="{% url 'accounts:vendor:add_category' %}" method="POST">
+                            <form action="{% url 'vendor:add_category' %}" method="POST">
                                 {% csrf_token %}
                                 <div class="form-fields-set">
                                     <div class="row">
