@@ -1,3 +1,4 @@
+from random import randint
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import VendorForm
 from accounts.forms import UserProfileForm
@@ -89,7 +90,7 @@ def add_category(request):
             else:
                 category = form.save(commit=False)
                 category.vendor = get_vendor(request)
-                category.slug = slugify(category_name)
+                category.slug = slugify(category_name)+'-' + str(request.user.id)
                 category.save()
                 messages.success(request, 'Category added successfully.')
                 return redirect('vendor:menu_builder')
@@ -117,7 +118,7 @@ def edit_category(request, pk=None):
             category_name = form.cleaned_data['category_name']
             category = form.save(commit=False)
             category.vendor = get_vendor(request)
-            category.slug = slugify(category_name)
+            category.slug = slugify(category_name)+'-' + str(request.user.id)
             form.save()
             messages.success(request,'Category updated successfully.')
             return redirect('vendor:menu_builder')
@@ -155,15 +156,22 @@ def delete_category(request, pk=None):
 def add_food(request):
     if request.method == 'POST':
         form = FoodItemForm(request.POST, request.FILES)
+        form.fields['category'].queryset = Category.objects.filter(vendor=get_vendor(request))
+
         if form.is_valid():
             food_title = form.cleaned_data['food_title']
-            print(food_title)
-            food = form.save(commit=False)
-            food.vendor = get_vendor(request)
-            food.slug = slugify(food_title)
-            form.save()
-            messages.success(request,'Food item added successfully.')
-            return redirect('vendor:fooditems_by_category',food.category.id)
+
+            existing_food = FoodItem.objects.filter(vendor=get_vendor(request),food_title__iexact=food_title).first()
+            if existing_food:
+                form.add_error('food_title', 'Food item with this name already exists.')
+            else:
+                print(food_title)
+                food = form.save(commit=False)
+                food.vendor = get_vendor(request)
+                food.slug = slugify(food_title)+'-' + str(request.user.id)
+                form.save()
+                messages.success(request,'Food item added successfully.')
+                return redirect('vendor:fooditems_by_category',food.category.id)
         else:
             print(form.errors)
     else:
@@ -186,11 +194,12 @@ def edit_food(request, pk=None):
     food = get_object_or_404(FoodItem,pk=pk)
     if request.method == 'POST':
         form = FoodItemForm(request.POST,request.FILES, instance=food)
+        form.fields['category'].queryset = Category.objects.filter(vendor=get_vendor(request))
         if form.is_valid():
             food_title = form.cleaned_data['food_title']
             food = form.save(commit=False)
             food.vendor = get_vendor(request)
-            food.slug = slugify(food_title)
+            food.slug = slugify(food_title)+'-' + str(request.user.id)
             form.save()
             messages.success(request,'Food item updated successfully.')
             return redirect('vendor:fooditems_by_category',food.category.id)
