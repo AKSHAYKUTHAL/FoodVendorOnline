@@ -68,4 +68,35 @@ def add_to_cart(request, food_id):
         else:
             return JsonResponse({'status':'Failed','message':'Invalid request'})
     else: 
-        return JsonResponse({'status':'Failed','message':'Please login to continue'})
+        return JsonResponse({'status':'login_required','message':'Please login to continue'})
+    
+
+
+
+def decrease_cart(request, food_id):
+    if request.user.is_authenticated:
+        # check if its ajax request
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            # Check if the food item exists
+            try:
+                fooditem = FoodItem.objects.get(id=food_id)
+                # Check if the user has already added the food to the cart
+                try:
+                    check_cart = Cart.objects.get(user=request.user, fooditem=fooditem)
+                    if check_cart.quantity > 1 :
+                        # decrease  cart quantity
+                        check_cart.quantity -= 1
+                        check_cart.save()
+                    else:
+                        check_cart.delete()
+                        check_cart.quantity = 0
+                    return JsonResponse({'status':'Success','cart_counter':get_cart_counter(request), 'qty':check_cart.quantity})
+                # if the user havn't already added the food to the cart the create the cart
+                except:
+                    return JsonResponse({'status':'Failed','message':'You do not have this food in your cart.'})
+            except:
+                return JsonResponse({'status':'Failed','message':'This food does not exist.'})
+        else:
+            return JsonResponse({'status':'Failed','message':'Invalid request'})
+    else: 
+        return JsonResponse({'status':'login_required','message':'Please login to continue'})
